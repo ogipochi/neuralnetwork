@@ -1,0 +1,49 @@
+import tensorflow as tf
+import os
+import sys
+import tensorflow.contrib.slim as slim
+import cv2
+import numpy as np
+from PIL import Image
+
+
+#バッチサイズ
+BATCH_SIZE = 16
+#入力画像
+IMAGE_WIDTH = 256
+IMAGE_HEIGHT = 256
+CHANNEL = 3
+#分類クラス
+NUM_CLASSES = 21
+
+#modelのパラメータ
+LEARNING_RATE = 0.01
+TRAIN_DIR = 'log/mytrain/'
+MAX_STEP = 20000
+AC_DISPLAY_ITER = 100
+TEST_ITERATION = 1000
+
+#学習のパラメータ
+NUM_EXAMPLES_PER_EPOCH = 20
+NUM_EPOCHS_PER_EPOCH = 5
+MOVING_AVERAGE_DECAY=0.9999
+BATCHNORM_MOVING_AVERAGE_DECAY = 0.9997
+INITIAL_LEARNING_RATE = 0.1
+NUM_EPOCHS_PER_DECAY = 30.0
+LEARNING_RATE_DECAY_FACTOR = 0.99
+
+
+RMSPROP_DECAY = 0.9
+RMSPROP_MOMENTUM = 0.9
+RMSPROP_EPSILON = 1.0
+
+
+TRAINING_FILE='train.tfrecords'
+
+#セッティングのパラメータ
+SUBSET = 'train'
+NUM_GPU = 1
+LOG_DEVICE_PLACEMENT = False
+FINE_TUNE = False
+PRETRAINED_MODEL_CHECKPOINT_PATH = ''
+
