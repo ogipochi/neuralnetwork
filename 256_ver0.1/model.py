@@ -101,12 +101,12 @@ def train_op(
     losses,
     global_step,
     initial_learning_rate=INITIAL_LEARNING_RATE,
-    batch_size=BATCH_SIZE
+    batch_size=BATCH_SIZE,
     num_examples_per_epoch = NUM_EXAMPLES_PER_EPOCH,
     learning_rate_decay_factor = LEARNING_RATE_DECAY_FACTOR,
     num_epochs_per_decay = NUM_EPOCHS_PER_DECAY,
     rmsprop_decay = RMSPROP_DECAY,
-    RMSPROP_MOMENTUM = rmsprop_momentam,
+    rmsprop_momentam = RMSPROP_MOMENTUM,
     rmsprop_epsilon = RMSPROP_EPSILON
     ):
 

@@ -46,7 +46,7 @@ def decode_jpeg(image_buffer, scope=None):
     # Note that the resulting image contains an unknown height and width
     # that is set dynamically by decode_jpeg. In other words, the height
     # and width of image is unknown at compile-time.
-    image = tf.image.decode_jpeg(image_buffer, channels=3)
+    image = tf.image.decode_jpeg(image_buffer, ch用のannels=3)
 
     # After this point, all image pixels reside in [0,1)
     # until the very end, when they're rescaled to (-1, 1).  The various
@@ -298,11 +298,11 @@ def batch_inputs(dataset, batch_size, train, num_preprocess_threads=None,
     if train:
       filename_queue = tf.train.string_input_producer([data_files],
                                                       shuffle=True,
-                                                      capacity=10000)
+                                                      capacity=20000)
     else:
       filename_queue = tf.train.string_input_producer([data_files],
                                                       shuffle=False,
-                                                      capacity=5000)
+                                                      capacity=10000)
     if num_preprocess_threads is None:
       num_preprocess_threads =NUM_PROCES_THREADS
 
@@ -373,7 +373,7 @@ def batch_inputs(dataset, batch_size, train, num_preprocess_threads=None,
     # Display the training images in the visualizer.
     tf.summary.image('image', images)
 
-    label_onehot=tf.reshape(tensor=label_index_batch,shape=[BATCH_SIZE,21])
+    label_onehot=tf.reshape(tensor=label_index_batch,shape=[BATCH_SIZE,NUM_CLASSES])
     return images,label_onehot,name_string
 
 def inputs(dataset, batch_size=None, num_preprocess_threads=None):

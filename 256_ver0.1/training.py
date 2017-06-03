@@ -1,5 +1,5 @@
 from config import*
-from mynet_inputs import*
+from sample_input import*
 import model
 
 import copy
@@ -47,17 +47,20 @@ def train(dataset):
         )
         num_preprocess_threads = NUM_PROCES_THREADS * NUM_GPU
         #inputのクラスからtfrecordのinputとlabel生成
-        images, labels,name_string = distorted_inputs(dataset=dataset, num_preprocess_threads=num_preprocess_threads)
+        images,labels,image_name= input(filenames=dataset)
         input_summarys = copy.copy(tf.get_collection(tf.GraphKeys.SUMMARIES))
         num_classes = NUM_CLASSES
-        images_splits = tf.split(axis=0, num_or_size_splits=NUM_GPU, value=images)
-        labels_splits = tf.split(axis=0, num_or_size_splits=NUM_GPU, value=labels)
+        labels_one_hot =tf.one_hot(indices=labels,depth=NUM_CLASSES,off_value=0.0,on_value=1.0)
+
+        # images_splits = tf.split(axis=0, num_or_size_splits=NUM_GPU, value=images)
+        # labels_splits = tf.split(axis=0, num_or_size_splits=NUM_GPU, value=labels)
+
         #logits(出力)生成
-        logits = model.vgg(image=images_splits[0],training_phase=True)
+        logits = model.vgg(image=images,training_phase=True)
         #accuracy(正解率)
-        acc= model.accuracy(logits=logits,labels=labels_splits)
+        acc= model.accuracy(logits=logits,labels=tf.reshape(labels_one_hot,[30,2]))
         #loss(正解値からのの分散)
-        losses = model.loss(logits=logits,labels=labels_splits[0])
+        losses = model.loss(logits=logits,labels=tf.reshape(labels_one_hot,[30,2]))
         train_op=model.train_op(losses=losses,global_step=global_step)
         
         saver = tf.train.Saver()
@@ -66,10 +69,10 @@ def train(dataset):
         # tf.summary.scalar('loss', losses)
         # tf.summary.scalar('accuracy_rate',acc)
         # merged = tf.summary.merge_all()
-        # summary_writer = tf.summary.FileWriter(logdir=TRAIN_DIR, graph=sess.graph)
         
         init = tf.global_variables_initializer()
         sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True,log_device_placement=LOG_DEVICE_PLACEMENT))
+        summary_writer = tf.summary.FileWriter(logdir=TRAIN_DIR, graph=sess.graph)
         #checkpointのカウンタ
         ckpt_point=0
         sess.run(init)
@@ -80,8 +83,8 @@ def train(dataset):
         for step in range(MAX_STEP):
             _,loss_value = sess.run([train_op,losses])
             if step %100 ==0:
-                accuracy,lr = sess.run([acc,learning_rate])
-                print("step={},accuracy = {},loss = {},lr={}".format(step,accuracy,loss_value,lr))
+                accuracy = sess.run([acc])
+                print("step={},accuracy = {},loss = {}".format(step,accuracy,loss_value))
                 #summary_writer.add_summary(summary,step)
                 
             if step % 500 == 0 or (step + 1) == MAX_STEP:
@@ -93,7 +96,7 @@ def train(dataset):
                 checkpoint_path = os.path.join(TRAIN_DIR, 'model.ckpt')
                 saver.save(sess, checkpoint_path, global_step=step)
                 ckpt_point=step
-                image_path_int+=1
+                #image_path_int+=1
                 #prediction_test(ckpt = ckpt_point,i=image_path_int)
                 print("add_checkpoint at {}".format(step))
                 
