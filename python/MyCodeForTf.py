@@ -1,12 +1,16 @@
+# -*- coding:utf-8 -*-
 import numpy as np
 from PIL import Image
 import glob
 import tensorflow as tf
+import sys
 
-def　tfrecordMk(dataDir,record_name='train'):
+def tfrecordMk(dataDir1,dataDir2,record_name='train'):
     data_list=[]
     #dataDirの全ファイル名をリストで取得
-    file_list = glob.glob(dataDir+'/*')
+    file_list = glob.glob(dataDir1+'/*')
+    file_list2 = glob.glob(dataDir2+'/*')
+    file_list.extend(file_list2)
     #すべてのファイルに対応するラベルをtouple型で定義
     for file in file_list:
         label = sampleLabelGetter(file)
@@ -19,7 +23,7 @@ def　tfrecordMk(dataDir,record_name='train'):
     #tfrecord生成
     writer = tf.python_io.TFRecordWriter(record_name)
     for imagePath,labels in data_list:
-        print('processing 'imagePath)
+        print('processing {} label {}'.format(imagePath,labels))
         #画像読み込み
         load_image = Image.open(imagePath)
         #numpy型へ変換
@@ -49,51 +53,17 @@ def　tfrecordMk(dataDir,record_name='train'):
 #現段階のラベルデータつけ
 #画像の名前から
 def sampleLabelGetter(filename):
-    if '0001' in filename:
-        return 1
-    elif '0002' in filename:
-        return 2
-    elif '0003' in filename:
-        return 3
-    elif '0004' in filename:
-        return 4
-    elif '0005' in filename:
-        return 5
-    elif '0006' in filename:
-        return 6
-    elif '0007' in filename:
-        return 7
-    elif '0008' in filename:
-        return 8
-    elif '0009' in filename:
-        return 9
-    elif '0010' in filename:
-        return 10
-    elif '0011' in filename:
-        return 11
-    elif '0012' in filename:
-        return 12
-    elif '0013' in filename:
-        return 13
-    elif '0014' in filename:
-        return 14
-    elif '0015' in filename:
-        return 15
-    elif '0016' in filename:
-        return 16
-    elif '0017' in filename:
-        return 17
-    elif '0018' in filename:
-        return 18
-    elif '0019' in filename:
-        return 19
-    elif '0020' in filename:
-        return 20
-    elif '0021' in filename:
+    folder = filename.split('/')[1]
+    if folder =='background':
+
         return 0
+    elif folder == 'character':
+        return 1
+    else:
+        sys.exit()
     
 
 
 if __name__ == '__main__':
-    tfrecordMk(dataDir='256x256',record_name='train')
+    tfrecordMk(dataDir1='dataset/background',dataDir2='dataset/character',record_name='train')
    
