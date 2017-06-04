@@ -57,7 +57,7 @@ def sampleLabelGetter(filename):
     if folder =='background':
 
         return 0
-    elif folder == 'character':
+    elif folder == 'good':
         return 1
     else:
         sys.exit()
@@ -65,5 +65,5 @@ def sampleLabelGetter(filename):
 
 
 if __name__ == '__main__':
-    tfrecordMk(dataDir1='dataset/background',dataDir2='dataset/character',record_name='train')
+    tfrecordMk(dataDir1='dataset/background',dataDir2='dataset/good',record_name='train')
    
